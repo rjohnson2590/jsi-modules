@@ -1,0 +1,32 @@
+body{
+max-width: 100%;
+
+}
+#myDrawing{
+	display: block;
+border: 5px solid black;
+margin:auto;
+}
+
+#circle{
+  height: 50px;
+  width: 50px;
+  border: 4px solid black;
+  border-radius: 100%;
+}
+
+.laser {
+    width:4px;
+    height:20px;
+    background:red;
+    position:absolute;
+}
+#gg {
+margin:auto;
+text-align: center;
+}
+
+#reload{ 	
+margin-left: -30%;
+margin-top: -10%;
+}
