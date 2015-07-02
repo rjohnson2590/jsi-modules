@@ -1,135 +1,86 @@
-var drawingCanvas = document.getElementById('myDrawing');
-var context= drawingCanvas.getContext("2d");
-var rightKey = false;
-var leftKey = false;
-var upKey = false;
-var downKey = false;
-var y=460;
-var x=40;
-var w = $('#myDrawing').width();
-var h = $('#myDrawing').height();
-var heroWidth = 40;
-var heroHeight= 40;
-var hurdleX=250;
-var vy = (Math.random() * 10)+5;
-var dirHolder=''
-
-function onKeyDown(evt) {
-  if (evt.keyCode == 39) rightKey = true;
-  else if (evt.keyCode == 37) leftKey = true;
-  if (evt.keyCode == 38) upKey = true;
-  if (evt.keyCode == 40) downKey = true;
-}
-
-
-function onKeyUp(evt) {
-  if (evt.keyCode == 39) rightKey = false;
-  else if (evt.keyCode == 37) leftKey = false;
-  if (evt.keyCode == 38) upKey = false;
-  else if (evt.keyCode == 40) downKey = false;
-}
-
-$(document).keydown(onKeyDown);
-$(document).keyup(onKeyUp);
-
-function Hero () {
-	this.create= function (){
-	  context.clearRect(0,0, 800,800);
-	  context.strokeStyle='#000000';
-	  context.fillStyle= '#FFFF00';
-	  context.beginPath();
-	  context.lineWidth="4";
-	  context.rect(x,y,heroWidth,heroHeight); 
-	  context.closePath();
-	  context.stroke();
-	  context.fill();
-  },
-
-  this.draw= function () {
-  if (rightKey) x += 10
-  if(rightKey && upKey){
-  	dirHolder = 'right'
-  }
-   if(leftKey && upKey){
-  	dirHolder = 'left'
-  }
-   if (leftKey) x -=10; 
-  if (upKey){
-   y -=10;
-	}
-  if(!upKey){
-   y +=5
-	}
-  if(!upKey && dirHolder==='right'){ 
-  	x +=5
-  	y +=5;
-  	if(y>=455){
-  		dirHolder=''
-  	}
-  }
-   if(!upKey && dirHolder==='left'){ 
-  	x -=5
-  	y +=5;
-  	if(y>=455){
-  		dirHolder=''
-  	}
-  }
-  else if (downKey) y += 10;
-  if (x <= 0) x = 0;  
-  if (x >= 760) x = 760;
-  if (y <= 0)  y = 0
-  if (y >= 460) y = 460;
-	},
-this.hitDetection = function (){	
-  	if ( x + heroWidth === hurdleX ){
-  		console.log('hello')
-  	
-  	x=hurdleX
-  }
-}
-
-}
-
-
-
-function Hurdle (xPlace,yPlace,height,width) {
-	this.create = function () {
-	  context.strokeStyle='#000000';
-	  context.fillStyle= 'black';
-	  context.beginPath();
-	  context.lineWidth="5";
-	  context.rect(xPlace,yPlace,height,width); 
-	  context.closePath();
-	  context.stroke();
-	  context.fill();
-	}
-}
-
-
-
-
-var hero = new Hero();
-var hurdle = new Hurdle(hurdleX,240,20,260);
-
-
-
-$('#start').click(function gl() {
-	window.setTimeout(gl,20);
-	
-  	hero.create()
-  	hurdle.create();
-  	hero.draw()
-  	hero.hitDetection();
-  	hero.draw();
+(function() {
+    var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+    window.requestAnimationFrame = requestAnimationFrame;
+})();
+ 
+var canvas = document.getElementById("canvas"),
+    ctx = canvas.getContext("2d"),
+    width = 500,
+    height = 200,
+    player = {
+      x : width/2,
+      y : height - 5,
+      width : 5,
+      height : 5,
+      speed: 3,
+      velX: 0,
+      velY: 0,
+      jumping: false
+    },
+    keys = [],
+    friction = 0.8;
+    gravity = 0.2;
+ 
+canvas.width = width;
+canvas.height = height;
+ 
+function update(){
+  // console.log('hello')
+  // check keys
+    if (keys[38] || keys[32]) {
+        // up arrow or space
+      if(!player.jumping){
+       player.jumping = true;
+       player.velY = -player.speed*2;
+      }
+    }
+    if (keys[39]) {
+        // right arrow
+        if (player.velX < player.speed) {             
+            player.velX++;         
+         }     
+    }     
+    if (keys[37]) {         
+        // left arrow         
+        if (player.velX > -player.speed) {
+            player.velX--;
+        }
+    }
+ 
+    player.velX *= friction;
+ 
+    player.velY += gravity;
+ 
+    player.x += player.velX;
+    player.y += player.velY;
+ 
+    if (player.x >= width-player.width) {
+        player.x = width-player.width;
+    } else if (player.x <= 0) {         
+        player.x = 0;     
+    }    
   
-   $('#start').hide();
-})
-
-
-
-
-
-
-
-
+    if(player.y >= height-player.height){
+        player.y = height - player.height;
+        player.jumping = false;
+    }
+ 
+  ctx.clearRect(0,0,width,height);
+  ctx.fillStyle = "red";
+  ctx.fillRect(player.x, player.y, player.width, player.height);
+ 
+  requestAnimationFrame(update);
+}
+ 
+document.body.addEventListener("keydown", function(e) {
+    keys[e.keyCode] = true;
+});
+ 
+document.body.addEventListener("keyup", function(e) {
+    keys[e.keyCode] = false;
+});
+ 
+window.addEventListener("load",function(){
+    update();
+});
 

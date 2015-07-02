@@ -2,7 +2,7 @@ body{
 max-width: 100%;
 
 }
-#myDrawing{
+#canvas{
 	display: block;
 border: 5px solid black;
 margin:auto;
